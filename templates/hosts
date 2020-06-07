@@ -1,0 +1,4 @@
+{{ range .Devices -}}
+    {{ .GetIPv4 $.Networks }} {{ join .GetHostnames " " }}        # {{ .GetName }} – {{ .GetDescription }}
+        {{- with .GetNetworkName }} {{- if . }} (in {{ . }}) {{- end }} {{- end }}
+{{ end }}
