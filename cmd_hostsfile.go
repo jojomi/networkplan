@@ -28,7 +28,6 @@ func cmdHostsfileHandler(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}
-	log.Trace().Msgf("%v", config)
 
 	funcs := template.FuncMap{
 		"join": strings.Join,
