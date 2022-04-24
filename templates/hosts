@@ -1,4 +1,6 @@
 {{ range .Devices -}}
-    {{ .GetIPv4 $.Networks }} {{ join .GetHostnames " " }}        # {{ .GetName }} – {{ .GetDescription }}
-        {{- with .GetNetworkName }} {{- if . }} (in {{ . }}) {{- end }} {{- end }}
-{{ end }}
+    # {{ .GetName }} – {{ .GetDescription }} {{- with .GetNetworkName }} {{- if . }} (in {{ . }}) {{- end }} {{- end }}
+    {{- newline -}}
+    {{ .GetIPv4 $.Networks }} {{ join .GetHostnames " " }}
+    {{- newline 2 -}}
+{{- end }}
