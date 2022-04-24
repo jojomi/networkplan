@@ -13,8 +13,9 @@ import (
 
 func getCmdHostsfile() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "hostsfile",
-		Run: cmdHostsfileHandler,
+		Use:   "hostsfile",
+		Short: "Export the network hosts in hostsfile format",
+		Run:   cmdHostsfileHandler,
 	}
 	return cmd
 }

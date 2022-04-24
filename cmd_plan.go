@@ -19,13 +19,14 @@ var (
 
 func getCmdPlan() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "plan",
-		Run: cmdPlanHandler,
+		Use:   "plan",
+		Short: "Generate a network plan in an HTML file",
+		Run:   cmdPlanHandler,
 	}
 
 	f := cmd.PersistentFlags()
 	f.BoolVarP(&flagPlanOpen, "open", "o", false, "output generated document")
-	f.BoolVarP(&flagOptionsPrintAllIPv4s, "print-all-ipv4s", "", false, "Also print non-used IPv4 addresses")
+	f.BoolVarP(&flagOptionsPrintAllIPv4s, "print-all-ipv4s", "", false, "Also print unused IPv4 addresses")
 
 	return cmd
 }
