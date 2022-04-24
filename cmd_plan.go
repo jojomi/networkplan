@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/hexops/valast"
 	"github.com/jojomi/tplrender"
 	"github.com/pkg/browser"
 	"github.com/rs/zerolog/log"
@@ -38,7 +39,7 @@ func cmdPlanHandler(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}
-	log.Trace().Msgf("%v", config)
+	log.Trace().Msg(valast.String(config))
 
 	templateFile := "plan.html"
 	opts := tplrender.Options{
