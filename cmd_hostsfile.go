@@ -18,9 +18,6 @@ func getCmdHostsfile() *cobra.Command {
 		Run:   cmdHostsfileHandler,
 	}
 
-	f := cmd.Flags()
-	f.StringP("config", "c", "~/.networkplan/network.yml", "Network config")
-
 	return cmd
 }
 

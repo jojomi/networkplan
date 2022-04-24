@@ -13,5 +13,8 @@ func getCmdRoot() *cobra.Command {
 		getCmdHostsfile(),
 	)
 
+	f := rootCmd.PersistentFlags()
+	f.StringP("config", "c", "~/.networkplan/network.yml", "Network config")
+
 	return rootCmd
 }

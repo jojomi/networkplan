@@ -158,8 +158,8 @@
                         </div>
                         <div class="addresses">
                             <div>
-                                <span class="address">{{ .GetIPv4First }}</span>
-                                –
+                                <span class="address">{{ .GetIPv4First }}</span> {{ "" -}}
+                                – {{ "" -}}
                                 <span class="address">{{ .GetIPv4Last }}</span>
                             </div>
                             <div>
@@ -168,9 +168,9 @@
                         </div>
                     </th>
                 </tr>
-                {{ if not .Wrapper }}
-                    {{ range $ipv4Addresses }}
-                        {{ $device := $.Config.Devices.GetByIPv4 $.Config.Networks . }}
+                {{ if not .Wrapper -}}
+                    {{ range $ipv4Addresses -}}
+                        {{ $device := $.Config.Devices.GetByIPv4 $.Config.Networks . -}}
                         {{ if not $device -}}
                             {{ if $.ExportOptions.PrintAllIPv4s -}}
                                 <tr class="data">

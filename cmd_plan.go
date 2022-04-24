@@ -1,13 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"github.com/jojomi/strtpl"
 	htmlTemplate "html/template"
+	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/hexops/valast"
-	"github.com/jojomi/tplrender"
-	"github.com/pkg/browser"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -24,9 +24,8 @@ func getCmdPlan() *cobra.Command {
 		Run:   cmdPlanHandler,
 	}
 
-	f := cmd.PersistentFlags()
-	f.BoolVarP(&flagPlanOpen, "open", "o", false, "output generated document")
-	f.BoolVarP(&flagOptionsPrintAllIPv4s, "print-all-ipv4s", "", false, "Also print unused IPv4 addresses")
+	f := cmd.Flags()
+	f.Bool("print-all-ipv4", false, "Also print unused IPv4 addresses")
 
 	return cmd
 }
@@ -36,18 +35,24 @@ type PlanExportOptions struct {
 }
 
 func cmdPlanHandler(cmd *cobra.Command, args []string) {
-	config, err := LoadNetworkConfigFromFile("network.yml")
+	env := EnvPlan{}
+	err := env.ParseFrom(cmd, args)
+	if err != nil {
+		log.Fatal().Err(err).Msg("could not parse params")
+	}
+	handlePlan(env)
+}
+
+func handlePlan(env EnvPlan) {
+	config, err := LoadNetworkConfigFromFile(env.ConfigFilename)
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}
-	log.Trace().Msg(valast.String(config))
 
-	templateFile := "plan.html"
-	opts := tplrender.Options{
-		TemplateDir:      "templates",
-		TemplateFilename: templateFile,
-		OutputDir:        "build",
-		OutputFilename:   templateFile,
+	templateFile := filepath.Join("templates", "plan.html")
+	templateContent, err := os.ReadFile(templateFile)
+	if err != nil {
+		log.Fatal().Err(err).Msgf("could not read template file at %s", templateFile)
 	}
 	exportOptions := PlanExportOptions{
 		PrintAllIPv4s: flagOptionsPrintAllIPv4s,
@@ -55,7 +60,7 @@ func cmdPlanHandler(cmd *cobra.Command, args []string) {
 	funcMap := htmlTemplate.FuncMap{
 		"join": strings.Join,
 	}
-	err = tplrender.HTMLTemplateWithFuncMap(opts, funcMap, struct {
+	renderedOutput, err := strtpl.EvalHTMLWithFuncMap(string(templateContent), funcMap, struct {
 		Config        *NetworkConfig
 		ExportOptions PlanExportOptions
 	}{
@@ -63,10 +68,8 @@ func cmdPlanHandler(cmd *cobra.Command, args []string) {
 		ExportOptions: exportOptions,
 	})
 	if err != nil {
-		log.Fatal().Err(err).Msg("")
+		log.Fatal().Err(err).Msg("rendering plan template failed")
 	}
 
-	if flagPlanOpen {
-		browser.OpenURL(filepath.Join(opts.OutputDir, opts.OutputFilename))
-	}
+	fmt.Println(renderedOutput)
 }
