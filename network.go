@@ -154,7 +154,7 @@ func LoadNetworkConfig(from io.Reader) (*NetworkConfig, error) {
 	}
 
 	var networkConfig NetworkConfig
-	err = yaml.UnmarshalStrict(data, &networkConfig)
+	err = yaml.Unmarshal(data, &networkConfig)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Unmarshalling failed")
 	}
