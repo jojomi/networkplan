@@ -70,21 +70,25 @@ date: 2022-04-24
 networks:
   - name: Home Network
     subnet: 192.168.12.0/24
+    domains:
+      - ""
+      - local
+      - .myhome.local
     sub:
-    - name: DHCP devices
-      subnet: 192.168.12.64/26
-      devices:
-        - name: albert
-          description: My fancy computer
-          network: DHCP devices
-          hostnames:
-            - fancy-computer
-            - albert
-          ipv4: nw+1
-        - name: marie
-          description: The Laptop
-          network: DHCP devices
-          ipv4: nw+2
+      - name: DHCP devices
+        subnet: 192.168.12.64/26
+        devices:
+          - name: albert
+            description: My fancy computer
+            network: DHCP devices
+            hostnames:
+              - fancy-computer
+              - albert
+            ipv4: nw+1
+          - name: marie
+            description: The Laptop
+            network: DHCP devices
+            ipv4: nw+2
 ```
 [testdata/example-network.yml](testdata/example-network.yml)
 
@@ -102,10 +106,10 @@ Execute `networkplan hostsfile --config testdata/example-network.yml` to get thi
   ## 192.168.12.65 – 192.168.12.126
 
     # albert – My fancy computer
-    192.168.12.65 fancy-computer albert
+    192.168.12.65 fancy-computer albert fancy-computer.local albert.local fancy-computer.myhome.local albert.myhome.local
 
     # marie – The Laptop
-    192.168.12.66 marie
+    192.168.12.66 marie marie.local marie.myhome.local
 
   ## END DHCP devices
 

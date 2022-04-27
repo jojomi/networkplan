@@ -14,7 +14,7 @@
             </td>
             <td>
                 <ul class="hostnames">
-                    {{ range .GetHostnames -}}
+                    {{ range .GetHostnamesInNetwork $.Network -}}
                     <li>
                         <div class="hostname">{{ . }}</div>
                     </li>
@@ -63,7 +63,7 @@
                 </tr>
                 {{ end -}}
             {{ else -}}
-                {{ template "device" dict "Device" $device "IPv4" . }}
+                {{ template "device" dict "Device" $device "IPv4" . "Network" $currentNetwork }}
             {{ end -}}
         {{ end -}}
 

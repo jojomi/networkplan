@@ -4,7 +4,7 @@
         # {{ .GetName }} – {{ .GetDescription }}
         {{- newline -}}
         {{- space $.Indent -}}
-        {{ .GetIPv4 $.Network }} {{ join .GetHostnames " " -}}
+        {{ .GetIPv4 $.Network }} {{ join (.GetHostnamesInNetwork $.Network) " " -}}
         {{- newline -}}
     {{ end -}}
 {{ end -}}

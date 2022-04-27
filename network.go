@@ -33,8 +33,31 @@ func (n *NetworkList) GetByName(search string) (*Network, error) {
 type Network struct {
 	Name    string      `yaml:""`
 	Subnet  string      `yaml:""`
+	Domains *[]string   `yaml:",omitempty"`
 	Sub     NetworkList `yaml:",omitempty"`
 	Devices DeviceList  `yaml:",omitempty"`
+
+	parent *Network
+}
+
+func (n *Network) SetParents() {
+	for _, sub := range n.Sub {
+		sub.parent = n
+		sub.SetParents()
+	}
+}
+
+func (n *Network) GetDomains() *[]string {
+	if n.Domains != nil {
+		return n.Domains
+	}
+
+	// look up the tree
+	p := n.parent
+	if p == nil {
+		return nil
+	}
+	return p.GetDomains()
 }
 
 func (n *Network) GetIPv4Addresses() ([]string, error) {
@@ -93,6 +116,25 @@ func (d *Device) GetHostnames() []string {
 	}
 
 	return []string{d.Name}
+}
+
+func (d *Device) GetHostnamesInNetwork(network *Network) []string {
+	result := make([]string, 0)
+
+	domains := network.GetDomains()
+	if domains == nil || len(*domains) == 0 {
+		domains = &[]string{""}
+	}
+	hostnames := d.GetHostnames()
+	for _, domain := range *domains {
+		if domain != "" && !strings.HasPrefix(domain, ".") {
+			domain = "." + domain
+		}
+		for _, c := range hostnames {
+			result = append(result, c+domain)
+		}
+	}
+	return result
 }
 
 func (d *Device) GetName() string {
@@ -156,6 +198,11 @@ func LoadNetworkConfig(from io.Reader) (*NetworkConfig, error) {
 	err = yaml.Unmarshal(data, &networkConfig)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Unmarshalling failed")
+	}
+
+	// augment for tree structure
+	for _, n := range networkConfig.Networks {
+		n.SetParents()
 	}
 
 	return &networkConfig, nil
