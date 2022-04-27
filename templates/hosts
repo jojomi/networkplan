@@ -1,6 +1,38 @@
-{{ range .Devices -}}
-    # {{ .GetName }} – {{ .GetDescription }} {{- with .GetNetworkName }} {{- if . }} (in {{ . }}) {{- end }} {{- end }}
-    {{- newline -}}
-    {{ .GetIPv4 $.Networks }} {{ join .GetHostnames " " }}
-    {{- newline 2 -}}
+{{ define "device" -}}
+    {{ with .Device }}
+        {{- space $.Indent -}}
+        # {{ .GetName }} – {{ .GetDescription }}
+        {{- newline -}}
+        {{- space $.Indent -}}
+        {{ .GetIPv4 $.Network }} {{ join .GetHostnames " " -}}
+        {{- newline -}}
+    {{ end -}}
+{{ end -}}
+
+{{ define "network" -}}
+    {{ with .Network -}}
+        {{ $network := . -}}
+        {{ newline 1 -}}
+        {{ space $.Indent -}}
+        ## BEGIN {{ .Name }}
+        {{- newline -}}
+        {{ space $.Indent -}}
+        ## {{ .GetIPv4First }} – {{ .GetIPv4Last }}
+        {{- newline -}}
+        {{- range .Devices }}
+            {{- newline -}}
+            {{ template "device" dict "Device" . "Network" $network "Indent" (add $.Indent 2) -}}
+        {{ end }}
+        {{- range .Sub -}}
+            {{ template "network" dict "Network" . "Indent" (add $.Indent 2) }}
+        {{- end }}
+        {{- newline -}}
+        {{ space $.Indent -}}
+        ## END {{ .Name }}
+        {{- newline -}}
+    {{- end }}
+{{- end }}
+
+{{- range .Networks -}}
+    {{ template "network" dict "Network" . "Indent" 0 }}
 {{- end }}

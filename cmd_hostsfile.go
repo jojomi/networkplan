@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"strings"
@@ -51,6 +52,17 @@ func handleHostsfile(env EnvHostsfile) {
 			}
 			return strings.Repeat("\n", c)
 		},
+		"space": func(count ...int) string {
+			var c int
+			if len(count) == 0 {
+				c = 1
+			} else {
+				c = count[0]
+			}
+			return strings.Repeat(" ", c)
+		},
+		"add":  templateAdd,
+		"dict": templateParamDict,
 	}
 	output, err := strtpl.EvalWithFuncMap(string(templateData), funcs, config)
 	if err != nil {
@@ -58,4 +70,27 @@ func handleHostsfile(env EnvHostsfile) {
 	}
 
 	fmt.Println(strings.TrimSpace(output))
+}
+
+func templateParamDict(values ...interface{}) (map[string]interface{}, error) {
+	if len(values)%2 != 0 {
+		return nil, errors.New("invalid dict call")
+	}
+	dict := make(map[string]interface{}, len(values)/2)
+	for i := 0; i < len(values); i += 2 {
+		key, ok := values[i].(string)
+		if !ok {
+			return nil, errors.New("dict keys must be strings")
+		}
+		dict[key] = values[i+1]
+	}
+	return dict, nil
+}
+
+func templateAdd(values ...int) int {
+	sum := 0
+	for _, value := range values {
+		sum += value
+	}
+	return sum
 }

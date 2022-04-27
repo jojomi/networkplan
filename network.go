@@ -17,7 +17,6 @@ import (
 type NetworkConfig struct {
 	Date     *time.Time  `yaml:",omitempty"`
 	Networks NetworkList `yaml:",omitempty"`
-	Devices  DeviceList  `yaml:",omitempty"`
 }
 
 type NetworkList []*Network
@@ -32,14 +31,18 @@ func (n *NetworkList) GetByName(search string) (*Network, error) {
 }
 
 type Network struct {
-	Name    string `yaml:""`
-	Subnet  string `yaml:""`
-	Virtual bool   `yaml:",omitempty"`
-	Wrapper bool   `yaml:",omitempty"`
+	Name    string      `yaml:""`
+	Subnet  string      `yaml:""`
+	Sub     NetworkList `yaml:",omitempty"`
+	Devices DeviceList  `yaml:",omitempty"`
 }
 
 func (n *Network) GetIPv4Addresses() ([]string, error) {
 	return getHosts(n.Subnet)
+}
+
+func (n *Network) GetDeviceByIPv4(ipv4 string) *Device {
+	return n.Devices.GetByIPv4(n, ipv4)
 }
 
 func (n *Network) GetIPv4First() (string, error) {
@@ -66,9 +69,9 @@ func (n *Network) GetIPv4Last() (string, error) {
 
 type DeviceList []*Device
 
-func (d *DeviceList) GetByIPv4(nl NetworkList, address string) *Device {
+func (d *DeviceList) GetByIPv4(parentNetwork *Network, address string) *Device {
 	for _, device := range *d {
-		if ip, err := device.GetIPv4(nl); err == nil && ip == address {
+		if ip, err := device.GetIPv4(parentNetwork); err == nil && ip == address {
 			return device
 		}
 	}
@@ -108,16 +111,12 @@ func (d *Device) GetDescription() string {
 	return d.Description
 }
 
-func (d *Device) GetIPv4(nl NetworkList) (string, error) {
+func (d *Device) GetIPv4(parentNetwork *Network) (string, error) {
 	if !strings.Contains(d.IPv4, "nw+") {
 		return d.IPv4, nil
 	}
 
-	network, err := nl.GetByName(d.Network)
-	if err != nil {
-		log.Fatal().Err(err).Msg("")
-	}
-	hosts, err := getHosts(network.Subnet)
+	hosts, err := getHosts(parentNetwork.Subnet)
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}

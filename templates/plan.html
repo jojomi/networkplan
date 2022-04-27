@@ -1,3 +1,78 @@
+{{ define "device" -}}
+    {{ with .Device -}}
+        <tr class="data">
+            <th>{{ $.IPv4 }}</th>
+            <td>
+                <div class="device">
+                    <div class="name">{{ .Name }}</div>
+                    {{ with .Description -}}
+                        {{ if . -}}
+                            <div class="description">{{ . }}</div>
+                        {{ end -}}
+                    {{ end -}}
+                </div>
+            </td>
+            <td>
+                <ul class="hostnames">
+                    {{ range .GetHostnames -}}
+                    <li>
+                        <div class="hostname">{{ . }}</div>
+                    </li>
+                    {{ end -}}
+                </ul>
+            </td>
+        </tr>
+    {{ end -}}
+{{ end -}}
+
+
+
+{{- define "network" -}}
+    {{ with .Network -}}
+        {{ $currentNetwork := . }}
+        <tr class="spacer">
+            <th></th>
+        </tr>
+        {{ $ipv4Addresses := .GetIPv4Addresses }}
+        <tr class="network-head level- {{- $.Level -}}">
+            <th colspan="4">
+                <div class="title">
+                    <div class="name">{{ .Name }}</div>
+                    <div class="subnet">{{ .Subnet }}</div>
+                </div>
+                <div class="addresses">
+                    <div>
+                        <span class="address">{{ .GetIPv4First }}</span> {{ "" -}}
+                        – {{ "" -}}
+                        <span class="address">{{ .GetIPv4Last }}</span>
+                    </div>
+                    <div>
+                        {{- len $ipv4Addresses }} Adressen
+                    </div>
+                </div>
+            </th>
+        </tr>
+        {{ range $ipv4Addresses -}}
+            {{ $device := $currentNetwork.GetDeviceByIPv4 . -}}
+            {{ if not $device -}}
+                {{ if $.ExportOptions.PrintAllIPv4s -}}
+                <tr class="data">
+                    <th>{{ . }}</th>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+                {{ end -}}
+            {{ else -}}
+                {{ template "device" dict "Device" $device "IPv4" . }}
+            {{ end -}}
+        {{ end -}}
+
+        {{- range .Sub -}}
+            {{ template "network" dict "Network" . "Level" (add $.Level 1) }}
+        {{- end }}
+    {{- end }}
+{{- end -}}
+
 <!doctype html>
 
 <html lang="de">
@@ -83,38 +158,19 @@
             color: white;
         }
 
-        tr.network-head.virtual th {
+        tr.network-head.level-1 th {
             background-color: #ccc;
             color: black;
             font-size: 100%;
         }
 
-        tr.network-head.virtual .addresses {
+        tr.network-head.level-1 .addresses {
             color: black;
-        }
-
-        tr.network-head .address {
-        }
-
-
-        tr.data .device .name {
-            
         }
 
         tr.data .device .description {
             font-size: 80%;
             color: gray;
-        }
-
-        tr.sum {
-            background-color: #444;
-            color: white;
-            padding: .15em;
-            font-weight: bold;
-        }
-
-        tr.sum.total {
-            font-size: 125%;
         }
 
         ul.hostnames {
@@ -144,67 +200,8 @@
             </tr>
         </thead>
         <tbody>
-
             {{- range .Config.Networks }}
-                <tr class="spacer">
-                    <th></th>
-                </tr>
-                {{ $ipv4Addresses := .GetIPv4Addresses }}
-                <tr class="network-head {{ if .Virtual -}} virtual {{- end }}">
-                    <th colspan="4">
-                        <div class="title">
-                            <div class="name">{{ .Name }}</div>
-                            <div class="subnet">{{ .Subnet }}</div>
-                        </div>
-                        <div class="addresses">
-                            <div>
-                                <span class="address">{{ .GetIPv4First }}</span> {{ "" -}}
-                                – {{ "" -}}
-                                <span class="address">{{ .GetIPv4Last }}</span>
-                            </div>
-                            <div>
-                                {{- len $ipv4Addresses }} Adressen
-                            </div>
-                        </div>
-                    </th>
-                </tr>
-                {{ if not .Wrapper -}}
-                    {{ range $ipv4Addresses -}}
-                        {{ $device := $.Config.Devices.GetByIPv4 $.Config.Networks . -}}
-                        {{ if not $device -}}
-                            {{ if $.ExportOptions.PrintAllIPv4s -}}
-                                <tr class="data">
-                                    <th>{{ . }}</th>
-                                    <td>-</td>
-                                    <td>-</td>
-                                </tr>
-                            {{ end -}}
-                        {{ else -}}
-                            <tr class="data">
-                                <th>{{ . }}</th>
-                                <td>
-                                    <div class="device">
-                                        <div class="name">{{ $device.Name }}</div>
-                                        {{ with $device.Description -}}
-                                            {{ if . -}}
-                                                <div class="description">{{ . }}</div>
-                                            {{ end -}}
-                                        {{ end -}}
-                                    </div>
-                                </td>
-                                <td>
-                                    <ul class="hostnames">
-                                        {{ range $device.GetHostnames -}}
-                                            <li>
-                                                <div class="hostname">{{ . }}</div>
-                                            </li>
-                                        {{ end -}}
-                                    </ul>
-                                </td>
-                            </tr>
-                        {{ end -}}
-                    {{ end -}}
-                {{ end -}}
+                {{ template "network" dict "Network" . "Level" 0 }}
             {{ end -}}
         </tbody>
     </table>

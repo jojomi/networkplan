@@ -70,22 +70,21 @@ date: 2022-04-24
 networks:
   - name: Home Network
     subnet: 192.168.12.0/24
-    wrapper: true
-  - name: DHCP devices
-    subnet: 192.168.12.64/26
-
-devices:
-  - name: albert
-    description: My fancy computer
-    network: DHCP devices
-    hostnames:
-      - fancy-computer
-      - albert
-    ipv4: nw+1
-  - name: marie
-    description: The Laptop
-    network: DHCP devices
-    ipv4: nw+2
+    sub:
+    - name: DHCP devices
+      subnet: 192.168.12.64/26
+      devices:
+        - name: albert
+          description: My fancy computer
+          network: DHCP devices
+          hostnames:
+            - fancy-computer
+            - albert
+          ipv4: nw+1
+        - name: marie
+          description: The Laptop
+          network: DHCP devices
+          ipv4: nw+2
 ```
 [testdata/example-network.yml](testdata/example-network.yml)
 
@@ -96,11 +95,21 @@ devices:
 Execute `networkplan hostsfile --config testdata/example-network.yml` to get this output:
 
 ``` yml
-# albert – My fancy computer (in DHCP devices)
-192.168.12.65 fancy-computer albert
+## BEGIN Home Network
+## 192.168.12.1 – 192.168.12.254
 
-# marie – The Laptop (in DHCP devices)
-192.168.12.66 marie
+  ## BEGIN DHCP devices
+  ## 192.168.12.65 – 192.168.12.126
+
+    # albert – My fancy computer
+    192.168.12.65 fancy-computer albert
+
+    # marie – The Laptop
+    192.168.12.66 marie
+
+  ## END DHCP devices
+
+## END Home Network
 ```
 
 ### Plan

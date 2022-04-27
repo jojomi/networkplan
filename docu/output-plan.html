@@ -83,38 +83,19 @@
             color: white;
         }
 
-        tr.network-head.virtual th {
+        tr.network-head.level-1 th {
             background-color: #ccc;
             color: black;
             font-size: 100%;
         }
 
-        tr.network-head.virtual .addresses {
+        tr.network-head.level-1 .addresses {
             color: black;
-        }
-
-        tr.network-head .address {
-        }
-
-
-        tr.data .device .name {
-            
         }
 
         tr.data .device .description {
             font-size: 80%;
             color: gray;
-        }
-
-        tr.sum {
-            background-color: #444;
-            color: white;
-            padding: .15em;
-            font-weight: bold;
-        }
-
-        tr.sum.total {
-            font-size: 125%;
         }
 
         ul.hostnames {
@@ -144,81 +125,85 @@
             </tr>
         </thead>
         <tbody>
-                <tr class="spacer">
-                    <th></th>
-                </tr>
                 
-                <tr class="network-head ">
-                    <th colspan="4">
-                        <div class="title">
-                            <div class="name">Home Network</div>
-                            <div class="subnet">192.168.12.0/24</div>
+        <tr class="spacer">
+            <th></th>
+        </tr>
+        
+        <tr class="network-head level-0">
+            <th colspan="4">
+                <div class="title">
+                    <div class="name">Home Network</div>
+                    <div class="subnet">192.168.12.0/24</div>
+                </div>
+                <div class="addresses">
+                    <div>
+                        <span class="address">192.168.12.1</span> – <span class="address">192.168.12.254</span>
+                    </div>
+                    <div>254 Adressen
+                    </div>
+                </div>
+            </th>
+        </tr>
+        
+        <tr class="spacer">
+            <th></th>
+        </tr>
+        
+        <tr class="network-head level-1">
+            <th colspan="4">
+                <div class="title">
+                    <div class="name">DHCP devices</div>
+                    <div class="subnet">192.168.12.64/26</div>
+                </div>
+                <div class="addresses">
+                    <div>
+                        <span class="address">192.168.12.65</span> – <span class="address">192.168.12.126</span>
+                    </div>
+                    <div>62 Adressen
+                    </div>
+                </div>
+            </th>
+        </tr>
+        <tr class="data">
+            <th>192.168.12.65</th>
+            <td>
+                <div class="device">
+                    <div class="name">albert</div>
+                    <div class="description">My fancy computer</div>
                         </div>
-                        <div class="addresses">
-                            <div>
-                                <span class="address">192.168.12.1</span> – <span class="address">192.168.12.254</span>
-                            </div>
-                            <div>254 Adressen
-                            </div>
+            </td>
+            <td>
+                <ul class="hostnames">
+                    <li>
+                        <div class="hostname">fancy-computer</div>
+                    </li>
+                    <li>
+                        <div class="hostname">albert</div>
+                    </li>
+                    </ul>
+            </td>
+        </tr>
+    
+            <tr class="data">
+            <th>192.168.12.66</th>
+            <td>
+                <div class="device">
+                    <div class="name">marie</div>
+                    <div class="description">The Laptop</div>
                         </div>
-                    </th>
-                </tr>
-                
-                <tr class="spacer">
-                    <th></th>
-                </tr>
-                
-                <tr class="network-head ">
-                    <th colspan="4">
-                        <div class="title">
-                            <div class="name">DHCP devices</div>
-                            <div class="subnet">192.168.12.64/26</div>
-                        </div>
-                        <div class="addresses">
-                            <div>
-                                <span class="address">192.168.12.65</span> – <span class="address">192.168.12.126</span>
-                            </div>
-                            <div>62 Adressen
-                            </div>
-                        </div>
-                    </th>
-                </tr>
-                <tr class="data">
-                                <th>192.168.12.65</th>
-                                <td>
-                                    <div class="device">
-                                        <div class="name">albert</div>
-                                        <div class="description">My fancy computer</div>
-                                            </div>
-                                </td>
-                                <td>
-                                    <ul class="hostnames">
-                                        <li>
-                                                <div class="hostname">fancy-computer</div>
-                                            </li>
-                                        <li>
-                                                <div class="hostname">albert</div>
-                                            </li>
-                                        </ul>
-                                </td>
-                            </tr>
-                        <tr class="data">
-                                <th>192.168.12.66</th>
-                                <td>
-                                    <div class="device">
-                                        <div class="name">marie</div>
-                                        <div class="description">The Laptop</div>
-                                            </div>
-                                </td>
-                                <td>
-                                    <ul class="hostnames">
-                                        <li>
-                                                <div class="hostname">marie</div>
-                                            </li>
-                                        </ul>
-                                </td>
-                            </tr>
-                        </tbody>
+            </td>
+            <td>
+                <ul class="hostnames">
+                    <li>
+                        <div class="hostname">marie</div>
+                    </li>
+                    </ul>
+            </td>
+        </tr>
+    
+            
+            </tbody>
     </table>
 
     <hr>

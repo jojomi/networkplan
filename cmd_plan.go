@@ -59,6 +59,8 @@ func handlePlan(env EnvPlan) {
 	}
 	funcMap := htmlTemplate.FuncMap{
 		"join": strings.Join,
+		"add":  templateAdd,
+		"dict": templateParamDict,
 	}
 	renderedOutput, err := strtpl.EvalHTMLWithFuncMap(string(templateContent), funcMap, struct {
 		Config        *NetworkConfig
