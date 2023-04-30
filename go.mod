@@ -1,6 +1,6 @@
 module github.com/jojomi/networkplan
 
-go 1.18
+go 1.20
 
 require (
 	github.com/jojomi/strtpl v0.4.4
