@@ -55,6 +55,6 @@ Execute `{{ $cmdHostsfile | replace $.binary_path $virtual_binary_path }}` to ge
 
 Execute `{{ $cmdPlan | replace $.binary_path $virtual_binary_path }}` to get this output:
 
-{{ exec $cmdPlan | saveToFile $outputFilename -}}
+{{ exec $cmdPlan | writeFile $outputFilename -}}
 
 [Click here](https://htmlpreview.github.io/?https://github.com/jojomi/networkplan/blob/master/ {{- $outputFilename -}} )
