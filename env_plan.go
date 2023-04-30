@@ -16,7 +16,7 @@ type EnvPlan struct {
 }
 
 // ParseFrom reads the state from a given cobra command and its args.
-func (e *EnvPlan) ParseFrom(command *cobra.Command, args []string) error {
+func (e *EnvPlan) ParseFrom(command *cobra.Command) error {
 	var (
 		f   = command.Flags()
 		err error

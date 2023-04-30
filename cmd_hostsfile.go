@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	"text/template"
 
@@ -24,7 +24,7 @@ func getCmdHostsfile() *cobra.Command {
 
 func cmdHostsfileHandler(cmd *cobra.Command, args []string) {
 	env := EnvHostsfile{}
-	err := env.ParseFrom(cmd, args)
+	err := env.ParseFrom(cmd)
 	if err != nil {
 		log.Fatal().Err(err).Msg("could not parse params")
 	}
@@ -32,7 +32,7 @@ func cmdHostsfileHandler(cmd *cobra.Command, args []string) {
 }
 
 func handleHostsfile(env EnvHostsfile) {
-	templateData, err := ioutil.ReadFile("templates/hosts")
+	templateData, err := os.ReadFile("templates/hosts")
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}

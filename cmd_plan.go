@@ -13,7 +13,6 @@ import (
 )
 
 var (
-	flagPlanOpen             bool
 	flagOptionsPrintAllIPv4s bool
 )
 
@@ -36,7 +35,7 @@ type PlanExportOptions struct {
 
 func cmdPlanHandler(cmd *cobra.Command, args []string) {
 	env := EnvPlan{}
-	err := env.ParseFrom(cmd, args)
+	err := env.ParseFrom(cmd)
 	if err != nil {
 		log.Fatal().Err(err).Msg("could not parse params")
 	}

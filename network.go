@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"io"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"strconv"
@@ -184,12 +183,17 @@ func LoadNetworkConfigFromFile(filename string) (*NetworkConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer func() {
+		err := f.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
 	return LoadNetworkConfig(f)
 }
 
 func LoadNetworkConfig(from io.Reader) (*NetworkConfig, error) {
-	data, err := ioutil.ReadAll(from)
+	data, err := io.ReadAll(from)
 	if err != nil {
 		return nil, err
 	}
