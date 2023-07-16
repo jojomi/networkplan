@@ -1,10 +1,10 @@
 {{ define "device" -}}
     {{ with .Device -}}
         <tr class="data">
-            <th><a href="http://{{ $.IPv4 }}">{{ $.IPv4 }}</a></th>
+            <th><a target="_blank" href="http://{{ $.IPv4 }}">{{ $.IPv4 }}</a></th>
             <td>
                 <div class="device">
-                    <div class="name"><a href="http://{{ .Name }}">{{ .Name }}</a></div>
+                    <div class="name">{{ .Name }}</div>
                     {{ with .Description -}}
                         {{ if . -}}
                             <div class="description">{{ . }}</div>
@@ -16,7 +16,7 @@
                 <ul class="hostnames">
                     {{ range .GetHostnamesInNetwork $.Network -}}
                     <li>
-                        <div class="hostname">{{ . }}</div>
+                        <div class="hostname"><a target="_blank" href="http://{{ . }}">{{ . }}</a></div>
                     </li>
                     {{ end -}}
                 </ul>
