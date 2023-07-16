@@ -1,9 +1,9 @@
 package main
 
 import (
+	_ "embed"
 	"errors"
 	"fmt"
-	"os"
 	"strings"
 	"text/template"
 
@@ -31,11 +31,10 @@ func cmdHostsfileHandler(cmd *cobra.Command, args []string) {
 	handleHostsfile(env)
 }
 
+//go:embed "templates/hosts"
+var hostsTemplate []byte
+
 func handleHostsfile(env EnvHostsfile) {
-	templateData, err := os.ReadFile("templates/hosts")
-	if err != nil {
-		log.Fatal().Err(err).Msg("")
-	}
 	config, err := LoadNetworkConfigFromFile(env.ConfigFilename)
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
@@ -64,7 +63,7 @@ func handleHostsfile(env EnvHostsfile) {
 		"add":  templateAdd,
 		"dict": templateParamDict,
 	}
-	output, err := strtpl.EvalWithFuncMap(string(templateData), funcs, config)
+	output, err := strtpl.EvalWithFuncMap(string(hostsTemplate), funcs, config)
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}
