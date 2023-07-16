@@ -1,11 +1,10 @@
 package main
 
 import (
+	_ "embed"
 	"fmt"
 	"github.com/jojomi/strtpl"
 	htmlTemplate "html/template"
-	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/rs/zerolog/log"
@@ -42,17 +41,15 @@ func cmdPlanHandler(cmd *cobra.Command, args []string) {
 	handlePlan(env)
 }
 
+//go:embed "templates/plan.html"
+var templatePlanData []byte
+
 func handlePlan(env EnvPlan) {
 	config, err := LoadNetworkConfigFromFile(env.ConfigFilename)
 	if err != nil {
 		log.Fatal().Err(err).Msg("")
 	}
 
-	templateFile := filepath.Join("templates", "plan.html")
-	templateContent, err := os.ReadFile(templateFile)
-	if err != nil {
-		log.Fatal().Err(err).Msgf("could not read template file at %s", templateFile)
-	}
 	exportOptions := PlanExportOptions{
 		PrintAllIPv4s: flagOptionsPrintAllIPv4s,
 	}
@@ -61,7 +58,7 @@ func handlePlan(env EnvPlan) {
 		"add":  templateAdd,
 		"dict": templateParamDict,
 	}
-	renderedOutput, err := strtpl.EvalHTMLWithFuncMap(string(templateContent), funcMap, struct {
+	renderedOutput, err := strtpl.EvalHTMLWithFuncMap(string(templatePlanData), funcMap, struct {
 		Config        *NetworkConfig
 		ExportOptions PlanExportOptions
 	}{
